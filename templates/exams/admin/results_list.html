@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Student Results{% endblock %}
+{% block content %}
+  <h2 class="mb-3">Student Results</h2>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Performance Summary</h5>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Exam</th>
+              <th>Total Attempts</th>
+              <th>Average Score</th>
+              <th>Average %</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in summary %}
+              <tr>
+                <td>{{ row.exam__title }}</td>
+                <td>{{ row.total_attempts }}</td>
+                <td>{{ row.avg_score|floatformat:2 }}</td>
+                <td>{{ row.avg_percentage|floatformat:2 }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-muted">No attempts yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Exam</th>
+          <th>Score</th>
+          <th>%</th>
+          <th>Attempt Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+          <tr>
+            <td>{{ r.student.username }}</td>
+            <td>{{ r.exam.title }}</td>
+            <td>{{ r.score }}/{{ r.total_marks }}</td>
+            <td>{{ r.percentage }}%</td>
+            <td>{{ r.attempted_at }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'result_detail' result_id=r.id %}">View</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-muted">No results found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+

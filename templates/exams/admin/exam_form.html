@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">{{ title }}</h2>
+    <a class="btn btn-outline-secondary" href="{% url 'admin_exam_list' %}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.title.id_for_label }}">Title</label>
+          {{ form.title }}
+          {% for err in form.title.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.description.id_for_label }}">Description</label>
+          {{ form.description }}
+          {% for err in form.description.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+        </div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label" for="{{ form.total_marks.id_for_label }}">Total Marks</label>
+            {{ form.total_marks }}
+            {% for err in form.total_marks.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="{{ form.duration_minutes.id_for_label }}">Duration (minutes)</label>
+            {{ form.duration_minutes }}
+            {% for err in form.duration_minutes.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <div class="form-check">
+              {{ form.is_active }}
+              <label class="form-check-label" for="{{ form.is_active.id_for_label }}">Active</label>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-success mt-3" type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Delete Exam{% endblock %}
+{% block content %}
+  <h2 class="mb-3">Delete Exam</h2>
+  <div class="alert alert-warning">
+    Are you sure you want to delete <strong>{{ exam.title }}</strong>?
+  </div>
+  <form method="post">
+    {% csrf_token %}
+    <a class="btn btn-outline-secondary" href="{% url 'admin_exam_list' %}">Cancel</a>
+    <button class="btn btn-danger" type="submit">Delete</button>
+  </form>
+{% endblock %}
+
