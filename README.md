@@ -1,9 +1,7 @@
 # Online Examination Portal (Django + MySQL)
 
-![CI](https://github.com/<OWNER>/<REPO>/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/rogx1ne/ExamPortal/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.12-blue)
-
-> Note: replace `<OWNER>/<REPO>` in the CI badge after pushing to GitHub.
 
 Web-based Online Examination Portal built with:
 
