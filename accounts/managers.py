@@ -15,4 +15,3 @@ class UserManager(DjangoUserManager):
         if not extra_fields.get("is_superuser"):
             raise ValueError("Superuser must have is_superuser=True.")
         return super().create_superuser(username, email=email, password=password, **extra_fields)
-

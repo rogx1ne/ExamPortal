@@ -1,0 +1,31 @@
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "exam_portal.settings_test"
+python_files = ["test_*.py"]
+
+[tool.coverage.run]
+branch = true
+source = ["accounts", "exams", "exam_portal"]
+omit = [
+  "*/migrations/*",
+  "*/__pycache__/*",
+  "*/settings_test.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = [
+  "if __name__ == .__main__.:",
+  "raise NotImplementedError",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["accounts", "exams", "exam_portal"]

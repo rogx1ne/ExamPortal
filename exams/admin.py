@@ -30,4 +30,3 @@ class ResultAdmin(admin.ModelAdmin):
 class ResultAnswerAdmin(admin.ModelAdmin):
     list_display = ("result", "question", "selected_option", "is_correct", "marks_awarded")
     list_filter = ("is_correct",)
-

@@ -37,7 +37,9 @@ def admin_dashboard(request):
     exams = Exam.objects.all().order_by("-created_at")
     summary = (
         Result.objects.values("exam_id", "exam__title")
-        .annotate(total_attempts=Count("id"), avg_score=Avg("score"), avg_percentage=Avg("percentage"))
+        .annotate(
+            total_attempts=Count("id"), avg_score=Avg("score"), avg_percentage=Avg("percentage")
+        )
         .order_by("-total_attempts", "exam__title")
     )
     recent_results = Result.objects.select_related("student", "exam").order_by("-attempted_at")[:10]
@@ -50,12 +52,19 @@ def admin_dashboard(request):
 
 @student_required
 def student_dashboard(request):
-    attempted_exam_ids = Result.objects.filter(student=request.user).values_list("exam_id", flat=True)
-    available_exams = Exam.objects.filter(is_active=True).exclude(id__in=attempted_exam_ids).order_by("title")
-    recent_results = Result.objects.filter(student=request.user).select_related("exam").order_by("-attempted_at")[:10]
+    attempted_exam_ids = Result.objects.filter(student=request.user).values_list(
+        "exam_id", flat=True
+    )
+    available_exams = (
+        Exam.objects.filter(is_active=True).exclude(id__in=attempted_exam_ids).order_by("title")
+    )
+    recent_results = (
+        Result.objects.filter(student=request.user)
+        .select_related("exam")
+        .order_by("-attempted_at")[:10]
+    )
     return render(
         request,
         "accounts/student_dashboard.html",
         {"available_exams": available_exams, "recent_results": recent_results},
     )
-

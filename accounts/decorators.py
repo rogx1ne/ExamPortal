@@ -22,4 +22,3 @@ def role_required(required_role: str):
 
 admin_required = role_required("ADMIN")
 student_required = role_required("STUDENT")
-

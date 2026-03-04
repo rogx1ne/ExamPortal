@@ -30,5 +30,6 @@
       </tbody>
     </table>
   </div>
-{% endblock %}
 
+  {% include "partials/pagination.html" with page_obj=page_obj %}
+{% endblock %}

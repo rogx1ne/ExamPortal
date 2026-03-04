@@ -4,6 +4,13 @@ import sys
 
 
 def main() -> None:
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv()
+    except ImportError:
+        pass
+
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "exam_portal.settings")
     try:
         from django.core.management import execute_from_command_line
@@ -18,4 +25,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

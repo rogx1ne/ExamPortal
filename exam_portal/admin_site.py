@@ -17,4 +17,3 @@ class ExamPortalAdminSite(AdminSite):
 
 
 admin_site = ExamPortalAdminSite(name="exam_portal_admin")
-

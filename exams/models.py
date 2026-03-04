@@ -44,7 +44,9 @@ class Question(models.Model):
 
 
 class Result(models.Model):
-    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="results")
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="results"
+    )
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name="results")
     score = models.PositiveIntegerField()
     total_marks = models.PositiveIntegerField()
@@ -74,9 +76,10 @@ class ResultAnswer(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["result", "question"], name="unique_answer_per_question_per_result"),
+            models.UniqueConstraint(
+                fields=["result", "question"], name="unique_answer_per_question_per_result"
+            ),
         ]
 
     def __str__(self) -> str:
         return f"{self.result_id} - Q{self.question_id} ({self.selected_option})"
-

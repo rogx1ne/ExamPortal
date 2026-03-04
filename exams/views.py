@@ -1,7 +1,8 @@
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import IntegrityError, transaction
 from django.db.models import Avg, Count
 from django.http import HttpResponseForbidden
@@ -22,8 +23,14 @@ def home(request):
 @student_required
 def exam_list(request):
     results = Result.objects.filter(student=request.user).values_list("exam_id", flat=True)
-    exams = Exam.objects.filter(is_active=True).order_by("title")
-    return render(request, "exams/exam_list.html", {"exams": exams, "attempted_exam_ids": set(results)})
+    exams_qs = Exam.objects.filter(is_active=True).order_by("title")
+    paginator = Paginator(exams_qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+    return render(
+        request,
+        "exams/exam_list.html",
+        {"exams": page_obj.object_list, "page_obj": page_obj, "attempted_exam_ids": set(results)},
+    )
 
 
 @student_required
@@ -88,13 +95,21 @@ def take_exam(request, exam_id: int):
     else:
         form = TakeExamForm(questions=questions)
 
-    return render(request, "exams/take_exam.html", {"exam": exam, "form": form, "questions": questions})
+    return render(
+        request, "exams/take_exam.html", {"exam": exam, "form": form, "questions": questions}
+    )
 
 
 @student_required
 def results_list(request):
-    results = Result.objects.filter(student=request.user).select_related("exam")
-    return render(request, "exams/results_list.html", {"results": results})
+    results_qs = (
+        Result.objects.filter(student=request.user).select_related("exam").order_by("-attempted_at")
+    )
+    paginator = Paginator(results_qs, 20)
+    page_obj = paginator.get_page(request.GET.get("page"))
+    return render(
+        request, "exams/results_list.html", {"results": page_obj.object_list, "page_obj": page_obj}
+    )
 
 
 @login_required
@@ -110,8 +125,14 @@ def result_detail(request, result_id: int):
 
 @admin_required
 def admin_exam_list(request):
-    exams = Exam.objects.all().order_by("-created_at")
-    return render(request, "exams/admin/exam_list.html", {"exams": exams})
+    exams_qs = Exam.objects.all().order_by("-created_at")
+    paginator = Paginator(exams_qs, 20)
+    page_obj = paginator.get_page(request.GET.get("page"))
+    return render(
+        request,
+        "exams/admin/exam_list.html",
+        {"exams": page_obj.object_list, "page_obj": page_obj},
+    )
 
 
 @admin_required
@@ -163,8 +184,14 @@ def admin_exam_toggle(request, exam_id: int):
 @admin_required
 def admin_question_list(request, exam_id: int):
     exam = get_object_or_404(Exam, id=exam_id)
-    questions = exam.questions.all()
-    return render(request, "exams/admin/question_list.html", {"exam": exam, "questions": questions})
+    questions_qs = exam.questions.all()
+    paginator = Paginator(questions_qs, 50)
+    page_obj = paginator.get_page(request.GET.get("page"))
+    return render(
+        request,
+        "exams/admin/question_list.html",
+        {"exam": exam, "questions": page_obj.object_list, "page_obj": page_obj},
+    )
 
 
 @admin_required
@@ -218,11 +245,18 @@ def admin_question_delete(request, question_id: int):
 
 @admin_required
 def admin_results_list(request):
-    results = Result.objects.select_related("student", "exam").order_by("-attempted_at")
+    results_qs = Result.objects.select_related("student", "exam").order_by("-attempted_at")
+    paginator = Paginator(results_qs, 50)
+    page_obj = paginator.get_page(request.GET.get("page"))
     summary = (
-        results.values("exam_id", "exam__title")
-        .annotate(total_attempts=Count("id"), avg_score=Avg("score"), avg_percentage=Avg("percentage"))
+        results_qs.values("exam_id", "exam__title")
+        .annotate(
+            total_attempts=Count("id"), avg_score=Avg("score"), avg_percentage=Avg("percentage")
+        )
         .order_by("-total_attempts", "exam__title")
     )
-    return render(request, "exams/admin/results_list.html", {"results": results, "summary": summary})
-
+    return render(
+        request,
+        "exams/admin/results_list.html",
+        {"results": page_obj.object_list, "page_obj": page_obj, "summary": summary},
+    )
